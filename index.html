@@ -3,67 +3,69 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#10251f"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Procure Pharmacy</title><link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script></head>
-<body>
-<header><div class="brand"><img src="procure-logo-original.jpg" alt="Procure Pharmacy logo"><div><small>PERSONAL BUSINESS MANAGER · V2</small><h1>Procure Pharmacy</h1></div></div><button id="backupBtn" class="round">⇧</button></header>
+<title>Procure Pharmacy</title><link rel="stylesheet" href="styles.css"></head><body>
+<header><div class="brand"><img src="procure-logo-original.jpg" alt="Procure Pharmacy"><div><small>PERSONAL BUSINESS MANAGER · FINAL V3</small><h1>Procure Pharmacy</h1></div></div><button id="backupTop" class="round" aria-label="Backup">⇧</button></header>
 <main>
-<section id="home" class="page active">
-<div class="topline"><span id="todayLabel"></span><span class="pill">LOCAL DATA</span></div><h2>Overview</h2>
+<section id="home" class="page active"><div class="topline"><span id="todayLabel"></span><span class="pill">ON THIS DEVICE</span></div><h2>Business overview</h2>
 <div class="metrics">
-<div class="metric"><span>Total sale today</span><strong id="totalSale">₹0</strong><small id="saleSplit">Cash ₹0 · Credit ₹0</small></div>
-<div class="metric"><span>Cash balance</span><strong id="cashBalance">₹0</strong><small>Calculated running balance</small></div>
-<div class="metric"><span>Customer due</span><strong id="customerDue">₹0</strong></div>
-<div class="metric"><span>Distributor due</span><strong id="distributorDue">₹0</strong></div>
-<div class="metric"><span>Today's expenses</span><strong id="expenseToday">₹0</strong></div>
-<div class="metric"><span>Month-to-date sale</span><strong id="monthSale">₹0</strong></div>
+<div class="metric"><span>Today's total sale</span><strong id="todaySales">₹0</strong><small id="todaySplit">Cash ₹0 · Credit ₹0</small></div>
+<div class="metric"><span>Cash balance*</span><strong id="cashBalance">₹0</strong></div>
+<div class="metric"><span>Customer outstanding</span><strong id="customerDue">₹0</strong></div>
+<div class="metric"><span>Distributor outstanding</span><strong id="supplierDue">₹0</strong></div>
+<div class="metric"><span>Today's expenses</span><strong id="todayExpenses">₹0</strong></div>
+<div class="metric"><span>Current stock value</span><strong id="stockValue">₹0</strong></div>
 </div>
-<div class="panel"><div class="panel-head"><h3>Quick actions</h3></div><div class="quick">
-<button data-open="daily">＋ Daily sale</button><button data-open="credit">＋ Customer ledger</button><button data-open="suppliers">＋ Distributor bill/payment</button><button data-open="expenses">＋ Add expense</button>
+<div class="alertbox" id="alerts"></div>
+<div class="panel"><h3>Quick actions</h3><div class="quick">
+<button data-open="daily">＋ Daily totals</button><button data-open="stock">＋ Add medicine</button><button data-open="credit">＋ Customer entry</button><button data-open="suppliers">＋ Supplier entry</button><button data-open="expenses">＋ Expense</button><button data-open="reports">▤ Reports & backup</button>
 </div></div>
-<div class="panel"><div class="panel-head"><h3>Recent transactions</h3><button class="text-btn" data-open="reports">View reports</button></div><div id="recent" class="stack empty">No transactions yet.</div></div>
+<div class="panel"><h3>Recent activity</h3><div id="recent" class="stack empty">No activity yet.</div></div>
+<p class="hint">*Cash balance is an estimate from entries recorded in this app. Reconcile it with your physical cash daily.</p>
 </section>
-<section id="daily" class="page"><h2>Daily sales</h2>
+
+<section id="daily" class="page"><h2>Daily sales & cash</h2>
 <form id="dailyForm" class="panel form">
-<label>Date<input name="date" type="date" required></label>
-<label>Cash sale (₹)<input name="cashSale" type="number" min="0" step=".01" required></label>
-<label>Credit sale (₹)<input name="creditSale" type="number" min="0" step=".01" value="0" required></label>
-<label>Opening cash (₹)<input name="opening" type="number" min="0" step=".01" value="0" required></label>
-<label class="wide">Note<input name="note" placeholder="Optional"></label>
-<div class="calc wide" id="dailyPreview">Total sale: ₹0</div><button class="primary wide">Save daily sale</button>
-</form><div class="panel"><h3>Daily history</h3><div id="dailyList" class="stack"></div></div>
-<p class="hint">Cash sale and credit sale are separate. Total sale = cash sale + credit sale. Do not enter credit sale again as cash sale.</p></section>
-<section id="credit" class="page"><h2>Customer ledger</h2>
-<form id="creditForm" class="panel form">
-<label>Date<input name="date" type="date" required></label><label>Customer name<input name="customer" required></label>
-<label>Phone<input name="phone" inputmode="tel"></label><label>Transaction<select name="type"><option value="Credit">Credit given</option><option value="Received">Payment received</option></select></label>
-<label>Amount (₹)<input name="amount" type="number" min=".01" step=".01" required></label><label>Due date<input name="dueDate" type="date"></label>
-<label class="wide">Note<input name="note"></label><button class="primary wide">Save transaction</button></form>
-<div class="panel"><h3>Customer balances</h3><input id="customerSearch" class="search" placeholder="Search customer or phone"><div id="customerBalances" class="stack"></div></div>
-<div class="panel"><h3>Customer transaction history</h3><div id="customerHistory" class="stack empty">Choose a customer from the balances list.</div></div>
-</section>
+<label>Date<input name="date" type="date" required></label><label>Cash sale (₹)<input name="cashSale" type="number" min="0" step="0.01" required></label>
+<label>Credit sale (₹)<input name="creditSale" type="number" min="0" step="0.01" value="0" required></label><label>Opening cash (₹)<input name="opening" type="number" min="0" step="0.01" value="0" required></label>
+<label class="wide">Note<input name="note"></label><div class="calc wide" id="salePreview">Total sale: ₹0</div><button class="primary wide">Save daily summary</button></form>
+<div class="panel"><h3>Daily records</h3><div id="dailyList" class="stack"></div></div>
+<p class="hint">Enter each date once. Cash sale and credit sale are separate; total sale is their sum. If you need to correct a date, delete its old row and enter it again.</p></section>
+
+<section id="stock" class="page"><h2>Medicine inventory</h2>
+<form id="productForm" class="panel form">
+<label>Medicine / product name<input name="name" required></label><label>Brand / generic<input name="brand"></label>
+<label>Batch number<input name="batch"></label><label>Expiry date<input name="expiry" type="date"></label>
+<label>Purchase price (₹)<input name="purchasePrice" type="number" min="0" step="0.01" required></label><label>MRP / selling price (₹)<input name="sellingPrice" type="number" min="0" step="0.01" required></label>
+<label>Opening quantity<input name="quantity" type="number" min="0" step="1" required></label><label>Low-stock alert at<input name="reorderLevel" type="number" min="0" step="1" value="5" required></label>
+<button class="primary wide">Add medicine to inventory</button></form>
+<div class="panel"><h3>Stock movement</h3><form id="movementForm" class="form">
+<label class="wide">Medicine<select name="productId" id="productSelect" required><option value="">Select medicine</option></select></label>
+<label>Movement<select name="kind"><option value="IN">Stock in / purchase</option><option value="OUT">Stock out / sold or damaged</option><option value="ADJUST">Set actual quantity</option></select></label>
+<label>Quantity<input name="quantity" type="number" min="0.01" step="1" required></label>
+<label>Date<input name="date" type="date" required></label><label>Reference / reason<input name="note"></label>
+<button class="primary wide">Save stock movement</button></form></div>
+<div class="panel"><h3>Inventory list</h3><input id="stockSearch" class="search" placeholder="Search medicine, brand or batch"><div class="filterrow"><button class="filter active" data-stock-filter="all">All</button><button class="filter" data-stock-filter="low">Low stock</button><button class="filter" data-stock-filter="expiry">Expiring soon</button></div><div id="productList" class="stack"></div></div>
+<div class="panel"><h3>Recent stock movements</h3><div id="movementList" class="stack"></div></div></section>
+
+<section id="credit" class="page"><h2>Customer credit ledger</h2>
+<form id="creditForm" class="panel form"><label>Date<input name="date" type="date" required></label><label>Customer name<input name="customer" required></label><label>Phone<input name="phone" inputmode="tel"></label><label>Transaction<select name="type"><option>Credit</option><option>Received</option></select></label><label>Amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required></label><label>Due date<input name="dueDate" type="date"></label><label class="wide">Note<input name="note"></label><button class="primary wide">Save transaction</button></form>
+<div class="panel"><h3>Customer balances</h3><input id="customerSearch" class="search" placeholder="Search name or phone"><div id="customerBalances" class="stack"></div></div><div class="panel"><h3>Selected customer history</h3><div id="customerHistory" class="stack empty">Tap a customer to view transactions.</div></div></section>
+
 <section id="suppliers" class="page"><h2>Distributor ledger</h2>
-<form id="supplierForm" class="panel form">
-<label>Date<input name="date" type="date" required></label><label>Distributor<input name="distributor" required></label>
-<label>Transaction<select name="type"><option value="Bill">Purchase bill</option><option value="Payment">Payment made</option></select></label>
-<label>Amount (₹)<input name="amount" type="number" min=".01" step=".01" required></label><label class="wide">Bill/reference or note<input name="note"></label>
-<button class="primary wide">Save transaction</button></form>
-<div class="panel"><h3>Distributor balances</h3><input id="supplierSearch" class="search" placeholder="Search distributor"><div id="supplierBalances" class="stack"></div></div>
-<div class="panel"><h3>Distributor history</h3><div id="supplierHistory" class="stack empty">Choose a distributor from the balances list.</div></div>
-</section>
-<section id="expenses" class="page"><h2>Expense manager</h2>
-<form id="expenseForm" class="panel form">
-<label>Date<input name="date" type="date" required></label><label>Paid to / person<input name="person" required></label>
-<label>Amount (₹)<input name="amount" type="number" min=".01" step=".01" required></label><label>Category<select name="category"><option>Shop</option><option>Personal</option><option>Salary</option><option>Rent</option><option>Utility</option><option>Other</option></select></label>
-<label class="wide">Description<input name="description"></label><button class="primary wide">Save expense</button></form>
-<div class="panel"><h3>Expense history</h3><input id="expenseSearch" class="search" placeholder="Search person, category or description"><div id="expenseList" class="stack"></div></div>
-</section>
-<section id="reports" class="page"><h2>Reports</h2>
-<div class="panel"><h3>Custom period summary</h3><div class="form two"><label>From<input id="fromDate" type="date"></label><label>To<input id="toDate" type="date"></label><button id="reportBtn" class="primary wide">Generate report</button></div><div id="report" class="report"></div></div>
-<div class="panel"><h3>Monthly snapshot</h3><div id="monthly" class="report"></div></div>
-<div class="panel"><h3>Medicine-related expenses</h3><form id="medicineForm" class="form two"><label>Date<input name="date" type="date" required></label><label>Person / category<input name="person" required></label><label>Amount (₹)<input name="amount" type="number" min=".01" step=".01" required></label><label class="wide">Reason<input name="cause"></label><button class="primary wide">Save</button></form><div id="medicineList" class="stack"></div></div>
-<div class="panel"><h3>Backup & export</h3><p class="hint">Keep a regular backup in iCloud Drive or Files. Data is stored on this iPhone/browser only.</p><button id="jsonBtn" class="secondary">Export full backup (JSON)</button><button id="xlsxBtn" class="secondary">Export records (Excel)</button><label class="file-btn">Restore backup (JSON)<input id="restoreFile" type="file" accept=".json,application/json"></label><div id="backupStatus" class="hint"></div></div>
+<form id="supplierForm" class="panel form"><label>Date<input name="date" type="date" required></label><label>Distributor<input name="distributor" required></label><label>Transaction<select name="type"><option>Bill</option><option>Payment</option></select></label><label>Amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required></label><label class="wide">Bill reference / note<input name="note"></label><button class="primary wide">Save transaction</button></form>
+<div class="panel"><h3>Distributor balances</h3><input id="supplierSearch" class="search" placeholder="Search distributor"><div id="supplierBalances" class="stack"></div></div><div class="panel"><h3>Selected distributor history</h3><div id="supplierHistory" class="stack empty">Tap a distributor to view transactions.</div></div></section>
+
+<section id="expenses" class="page"><h2>Expense management</h2>
+<form id="expenseForm" class="panel form"><label>Date<input name="date" type="date" required></label><label>Person / payee<input name="person" required></label><label>Amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required></label><label>Category<select name="category"><option>Shop</option><option>Personal</option><option>Salary</option><option>Rent</option><option>Utility</option><option>Other</option></select></label><label class="wide">Description<input name="description"></label><button class="primary wide">Save expense</button></form>
+<div class="panel"><h3>Expense history</h3><input id="expenseSearch" class="search" placeholder="Search payee or description"><div id="expenseList" class="stack"></div></div>
+<div class="panel"><h3>Medicine-related expenses</h3><form id="medicineForm" class="form"><label>Date<input name="date" type="date" required></label><label>Person / category<input name="person" required></label><label>Amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required></label><label class="wide">Reason<input name="cause"></label><button class="primary wide">Save medicine expense</button></form><div id="medicineList" class="stack"></div></div></section>
+
+<section id="reports" class="page"><h2>Reports & data safety</h2>
+<div class="panel"><h3>Custom period report</h3><div class="form two"><label>From<input id="fromDate" type="date"></label><label>To<input id="toDate" type="date"></label><button id="reportBtn" class="primary wide">Generate report</button></div><div id="report" class="report"></div></div>
+<div class="panel"><h3>Monthly summary</h3><div id="monthly" class="report"></div></div>
+<div class="panel"><h3>Backup & restore</h3><p class="hint">Export JSON regularly and save it in iCloud Drive / Files. A backup is essential because local browser data can be lost if website data is cleared or the device is changed.</p><button id="jsonBtn" class="secondary">Export full backup (JSON)</button><button id="csvBtn" class="secondary">Export tables (CSV files)</button><label class="file-btn">Restore backup (JSON)<input id="restoreFile" type="file" accept=".json,application/json"></label><div id="backupStatus" class="hint"></div></div>
+<div class="panel"><h3>About this app</h3><p class="hint">Personal bookkeeping aid. It is not a pharmacy billing system, statutory accounting package, tax tool, or audited profit-and-loss system. Verify expiry, batch, prescription and stock details independently.</p><button id="deleteAll" class="danger-btn">Delete all app data</button></div>
 </section>
 </main>
-<nav><button data-page="home" class="selected"><b>⌂</b>Home</button><button data-page="daily"><b>▤</b>Daily</button><button data-page="credit"><b>♙</b>Customers</button><button data-page="suppliers"><b>⇄</b>Suppliers</button><button data-page="expenses"><b>₹</b>Expenses</button><button data-page="reports"><b>•••</b>Reports</button></nav>
+<nav><button data-page="home" class="selected"><b>⌂</b>Home</button><button data-page="daily"><b>▤</b>Daily</button><button data-page="stock"><b>▦</b>Stock</button><button data-page="credit"><b>♙</b>Customers</button><button data-page="suppliers"><b>⇄</b>Suppliers</button><button data-page="expenses"><b>₹</b>Expenses</button><button data-page="reports"><b>•••</b>More</button></nav>
 <script src="app.js"></script></body></html>

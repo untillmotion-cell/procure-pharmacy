@@ -1,31 +1,38 @@
-# Procure Pharmacy V2
-Mobile-first, local-first PWA for personal use.
+# Procure Pharmacy — Final V3
 
-## Deploy/update with GitHub Pages
-1. Open your existing `procure-pharmacy` GitHub repository.
-2. Replace the old `index.html`, `styles.css`, `app.js`, `manifest.json`, `sw.js`, and `icon.svg` with these V2 files (upload each and commit).
-3. GitHub Pages should redeploy automatically.
-4. Open the existing Pages URL in Safari. If an old version remains, close the installed app, open the URL in Safari, refresh, and wait briefly for the service worker update.
+A mobile-first personal pharmacy bookkeeping PWA for iPhone Safari. It uses IndexedDB on the device and can be hosted as a static GitHub Pages site.
 
-## iPhone
-Safari → Share → Add to Home Screen.
+## Update your existing GitHub repository
+1. Download and extract this ZIP.
+2. In your existing `procure-pharmacy` repository, replace `index.html`, `styles.css`, `app.js`, `manifest.json`, `sw.js` and upload all logo assets (`procure-logo-original.jpg`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`).
+3. Commit the changes. GitHub Pages redeploys automatically.
+4. Open your existing Pages URL in Safari. Refresh. If installed as a Home Screen app, close it fully and reopen after deployment; if the icon remains old, remove it from Home Screen and add it again.
 
-## Storage and safety
-All records are stored in IndexedDB on the current iPhone/browser. This does not sync between devices. Export JSON backups frequently and store them in iCloud Drive/Files. Do not upload private transaction/customer data to the GitHub repository.
+## Important data compatibility
+This version upgrades the existing IndexedDB database `procure-pharmacy-v2` from database version 1 to 2, preserving the V2 tables and adding inventory tables. Existing V2 records should remain. V1's separate database name `procure-pharmacy-v1` is not imported automatically.
 
-## V2 features
-- Daily cash and credit sales entered separately; total sales calculated.
-- Customer credit / payment ledger and customer history.
-- Distributor bill / payment ledger and distributor history.
-- Expense categories and history.
-- Medicine-related expense records.
-- Today and month-to-date dashboard.
-- Custom-period summary.
-- JSON backup and restore; Excel export.
+## Features
+- Daily cash and credit sale summary.
+- Customer credit and received-payment ledger, balances and transaction history.
+- Distributor bills and payments, balances and history.
+- Expense and medicine-expense tracking.
+- Medicine inventory with batch, expiry, purchase price, selling price, quantity and low-stock threshold.
+- Stock in, stock out, and set-actual-quantity movements.
+- Low-stock, expiring-within-90-days and expired-item alerts.
+- Current stock value at purchase cost.
+- Period and monthly summaries.
+- JSON backup and restore; CSV exports that open in Excel.
+- Uses the supplied Procure Pharmacy logo in the header and iPhone app icon.
 
-## Accounting caveats
-Cash balance is a running estimate based on daily opening cash + cash sales + customer receipts − distributor payments − expenses. Enter opening cash carefully and consistently. This starter is not a full inventory, tax, statutory accounting, or audited profit/loss system. Purchase bills do not by themselves establish cost of goods sold or gross profit.
+## Stock and accounting rules
+- Inventory movement is separate from daily sales totals. Enter daily sales in Daily Sales & Cash; use stock movements to update physical stock. This avoids automatically counting the same sale twice.
+- Stock value is estimated as current quantity × purchase price.
+- The cash balance is an estimate from the most recent daily opening-cash baseline plus recorded cash sales and customer receipts minus supplier payments and expenses. Reconcile against physical cash.
+- Purchase bills are not the same as cost of goods sold; this app does not calculate audited gross/net profit.
+- Expiry alerts are based on the date entered for each product record. Use separate product records for different batches/expiry dates.
 
+## Backups and privacy
+All financial and customer records are stored locally in IndexedDB on this iPhone/browser. They are not synced to other devices. Export JSON backups regularly and save them in iCloud Drive/Files. Clearing Safari website data, removing browser data, or changing devices can make local records unavailable. Never commit customer or transaction data to GitHub.
 
-## Custom Procure Pharmacy logo
-The supplied logo is used in the app header, the iPhone Home Screen icon, and the PWA manifest icons. Upload all files, including the PNG and JPG logo assets, to the repository root.
+## Quality note
+The code is written to be self-contained and avoids external runtime libraries. It has been syntax-checked, but no developer can honestly guarantee zero bugs across every iOS/Safari version or device. Test with sample entries first and keep backups before using it for real accounts. This is a personal-use bookkeeping tool, not regulated pharmacy billing, prescription validation, tax, or statutory accounting software.
